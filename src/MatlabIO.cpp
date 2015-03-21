@@ -520,7 +520,7 @@ MatlabIOContainer MatlabIO::collateMatrixFields(uint32_t, uint32_t, vector<char>
         case MAT_INT16_CLASS:     variable = constructMatrix<int16_t>(name, dims, real, imag, real_type); break;
         case MAT_UINT16_CLASS:    variable = constructMatrix<uint16_t>(name, dims, real, imag, real_type); break;
         case MAT_INT32_CLASS:     variable = constructMatrix<int32_t>(name, dims, real, imag, real_type); break;
-        case MAT_UINT32_CLASS:    variable = constructMatrix<uint32_t>(name, dims, real, imag, real_type); break;
+        case MAT_UINT32_CLASS:    variable = constructMatrix<int32_t>(name, dims, real, imag, real_type); break;
         case MAT_FLOAT_CLASS:     variable = constructMatrix<float>(name, dims, real, imag, real_type); break;
         case MAT_DOUBLE_CLASS:    variable = constructMatrix<double>(name, dims, real, imag, real_type); break;
         case MAT_INT64_CLASS:     variable = constructMatrix<int64_t>(name, dims, real, imag, real_type); break;

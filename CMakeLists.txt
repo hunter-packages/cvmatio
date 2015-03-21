@@ -39,7 +39,18 @@ endif()
 # find the dependencies
 find_package(Boost REQUIRED)
 find_package(OpenCV REQUIRED)
-include(FindZLIB)
+
+#include(FindZLIB)
+
+set(ZLIB_ROOT )
+find_package( ZLIB REQUIRED )
+if( ZLIB_FOUND )
+    message(" Found zlib ")
+    message( ${ZLIB_INCLUDE_DIR} )
+endif( ZLIB_FOUND )
+
+#find_library (lzlib NAMES lzlib z)
+#find_package(zlib)
 
 # include the dependencies
 include_directories(SYSTEM ${OPENCV_INCLUDE_DIRS}
