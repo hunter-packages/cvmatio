@@ -53,9 +53,11 @@ endif( ZLIB_FOUND )
 #find_package(zlib)
 
 # include the dependencies
-include_directories(SYSTEM ${OPENCV_INCLUDE_DIRS}
-                           ${Boost_INCLUDE_DIRS}
-                           ${ZLIB_INCLUDE_DIR})
+message( "CVMATIO OPENCV: ${OpenCV_INCLUDE_DIRS}" )
+message( "CVMATIO Boost: ${Boost_INCLUDE_DIRS}" )
+message( "CVMATIO ZLIB: ${ZLIB_INCLUDE_DIRS}" )
+
+include_directories(${OpenCV_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIR})
 include_directories("include")
 
 # build the project
