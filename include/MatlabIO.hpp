@@ -38,16 +38,21 @@
 
 #ifndef MATLABIO_HPP_
 #define MATLABIO_HPP_
+
+#include <assert.h>
+
+#include "MatlabIOContainer.hpp"
+#include "EFStream.hpp"
+#include "typetraits.hpp"
+
+#include <opencv2/core/core.hpp>
+
 #include <string>
 #include <vector>
 #include <cstdio>
 #include <fstream>
 #include <iostream>
 #include <zlib.h>
-#include <opencv2/core/core.hpp>
-#include "MatlabIOContainer.hpp"
-#include "EFStream.hpp"
-#include "typetraits.hpp"
 
 
 enum {

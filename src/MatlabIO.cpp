@@ -35,13 +35,15 @@
  *  Author:  Hilton Bristow
  *  Created: Jun 27, 2012
  */
+
+#include <assert.h>
+#include "MatlabIO.hpp"
 #include <vector>
 #include <cerrno>
 #include <cstring>
-#include <zlib.h>
 #include <iostream>
 #include <exception>
-#include "MatlabIO.hpp"
+#include <zlib.h>
 using namespace std;
 using namespace cv;
 
