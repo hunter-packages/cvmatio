@@ -18,5 +18,5 @@ target_link_libraries(${PROJECT_NAME}   ${Boost_LIBRARIES}
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin
                                 LIBRARY DESTINATION lib
 				ARCHIVE DESTINATION lib
-				PUBLIC_HEADER DESTINATION include/cvmatio)
+				PUBLIC_HEADER DESTINATION include/cvmatio
 )
