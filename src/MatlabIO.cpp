@@ -721,8 +721,10 @@ std::vector<MatlabIOContainer> MatlabIO::read(void) {
 void MatlabIO::whos(vector<MatlabIOContainer> variables) const {
 
 	// get the longest filename
-	unsigned int flmax = 0;
-	for (unsigned int n = 0; n < variables.size(); ++n) if(variables[n].name().length() > flmax) flmax = variables[n].name().length();
+	size_t flmax = 0;
+	for (unsigned int n = 0; n < variables.size(); ++n) 
+	    if(variables[n].name().length() > flmax) 
+	        flmax = variables[n].name().length();
 
 	printf("-------------------------\n");
 	printf("File: %s\n", filename_.c_str());
