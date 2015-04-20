@@ -561,7 +561,7 @@ vector<char> MatlabIO::uncompressVariable(uint32_t& data_type, uint32_t& dbytes,
     if (ok != Z_OK) { cerr << "Unable to inflate variable" << endl; exit(-5); }
 
     // inflate the variable header
-    infstream.avail_in = data.size();
+    infstream.avail_in = (int)data.size();
     infstream.next_in = (unsigned char *)&(data[0]);
     infstream.avail_out = 8;
     infstream.next_out = (unsigned char *)&buf;
