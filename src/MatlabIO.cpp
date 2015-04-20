@@ -126,7 +126,7 @@ template<class T1, class T2>
 vector<T2> convertPrimitiveType(const vector<char>& in) {
 
 	// firstly reinterpret the input as type T1
-	const unsigned int T1_size = in.size() / sizeof(T1);
+	const size_t T1_size = in.size() / sizeof(T1);
 	const T1* in_ptr = reinterpret_cast<const T1*>(&(in[0]));
 
 	// construct the new vector
@@ -721,15 +721,17 @@ std::vector<MatlabIOContainer> MatlabIO::read(void) {
 void MatlabIO::whos(vector<MatlabIOContainer> variables) const {
 
 	// get the longest filename
-	unsigned int flmax = 0;
-	for (unsigned int n = 0; n < variables.size(); ++n) if(variables[n].name().length() > flmax) flmax = variables[n].name().length();
+	size_t flmax = 0;
+	for (unsigned int n = 0; n < variables.size(); ++n) 
+	    if(variables[n].name().length() > flmax) 
+	        flmax = variables[n].name().length();
 
 	printf("-------------------------\n");
 	printf("File: %s\n", filename_.c_str());
 	printf("%s\n", header_);
 	printf("Variables:\n");
 	for (unsigned int n = 0; n < variables.size(); ++n) {
-		printf("%*s:  %s\n", flmax, variables[n].name().c_str(), variables[n].type().c_str());
+		printf("%*s:  %s\n", int(flmax), variables[n].name().c_str(), variables[n].type().c_str());
 	}
 	printf("-------------------------\n");
 	fflush(stdout);
