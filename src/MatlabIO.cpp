@@ -126,7 +126,7 @@ template<class T1, class T2>
 vector<T2> convertPrimitiveType(const vector<char>& in) {
 
 	// firstly reinterpret the input as type T1
-	const unsigned int T1_size = in.size() / sizeof(T1);
+	const size_t T1_size = in.size() / sizeof(T1);
 	const T1* in_ptr = reinterpret_cast<const T1*>(&(in[0]));
 
 	// construct the new vector
