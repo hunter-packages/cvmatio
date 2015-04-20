@@ -731,7 +731,7 @@ void MatlabIO::whos(vector<MatlabIOContainer> variables) const {
 	printf("%s\n", header_);
 	printf("Variables:\n");
 	for (unsigned int n = 0; n < variables.size(); ++n) {
-		printf("%*s:  %s\n", flmax, variables[n].name().c_str(), variables[n].type().c_str());
+		printf("%*s:  %s\n", int(flmax), variables[n].name().c_str(), variables[n].type().c_str());
 	}
 	printf("-------------------------\n");
 	fflush(stdout);
