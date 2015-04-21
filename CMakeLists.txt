@@ -1,5 +1,13 @@
 # MatlabIO CMakeLists.txt
 cmake_minimum_required(VERSION 2.8)
+
+include("cmake/HunterGate.cmake")
+HunterGate(
+    URL "https://github.com/ruslo/hunter/archive/v0.8.12.tar.gz"
+    SHA1 "ced369107f0f2c7a68e9e93f43fc5492747dd721"
+    FILEPATH "${CMAKE_BINARY_DIR}/hunter-config.cmake"
+)
+
 project(cvmatio)
 
 # -----------------------------------------------
