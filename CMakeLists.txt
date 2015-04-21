@@ -50,7 +50,6 @@ endif()
 
 find_package(ZLIB CONFIG REQUIRED)
 find_package(TIFF CONFIG REQUIRED)
-#find_package(PNG CONFIG REQUIRED)
 
 # find the dependencies
 find_package(Boost REQUIRED)
