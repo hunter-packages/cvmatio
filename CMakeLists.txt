@@ -1,12 +1,16 @@
 # MatlabIO CMakeLists.txt
 cmake_minimum_required(VERSION 2.8)
 
+message("before hunter gate")
+
 include("cmake/HunterGate.cmake")
 HunterGate(
     URL "https://github.com/ruslo/hunter/archive/v0.8.12.tar.gz"
     SHA1 "ced369107f0f2c7a68e9e93f43fc5492747dd721"
     FILEPATH "${CMAKE_BINARY_DIR}/hunter-config.cmake"
 )
+
+message("after hunter gate")
 
 project(cvmatio)
 
@@ -43,6 +47,10 @@ if (NOT CMAKE_BUILD_TYPE)
         "Choose the type of build. Options are: None, Debug, Release, RelWithDebInfo, MinSizeRel"
     FORCE)
 endif()
+
+find_package(ZLIB CONFIG REQUIRED)
+find_package(PNG CONFIG REQUIRED)
+find_package(TIFF CONFIG REQUIRED)
 
 # find the dependencies
 find_package(Boost REQUIRED)
