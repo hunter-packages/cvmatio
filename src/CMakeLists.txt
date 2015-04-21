@@ -31,3 +31,5 @@ install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin
 				ARCHIVE DESTINATION lib
 				PUBLIC_HEADER DESTINATION include/cvmatio
 )
+
+install(DIRECTORY ../include DESTINATION include/cvmatio) # no trailing ../include/
