@@ -5,7 +5,7 @@ if(BUILD_EXECUTABLE)
     add_executable(${PROJECT_NAME} ${SRC_FILES})
 else()
     set(SRC_FILES MatlabIO.cpp)
-    add_library(${PROJECT_NAME} SHARED ${SRC_FILES})
+    add_library(${PROJECT_NAME} ${SRC_FILES})
 endif()
 
 #link
