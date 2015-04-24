@@ -46,8 +46,8 @@ hunter_add_package(OpenCV)
 hunter_add_package(Boost)
 
 find_package(Boost REQUIRED)
-find_package(ZLIB CONFIG) # workaround
-find_package(TIFF CONFIG) # workaround
+find_package(ZLIB CONFIG QUIET) # workaround
+find_package(TIFF CONFIG QUIET) # workaround
 find_package(OpenCV REQUIRED)
 
 # include the dependencies
