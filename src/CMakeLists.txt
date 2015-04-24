@@ -14,22 +14,51 @@ target_link_libraries(${PROJECT_NAME}   ${Boost_LIBRARIES}
                                         ${ZLIB_LIBRARIES}
 )
 
-set(CVMATIO_PUBLIC_HEADERS 
-  ../include/EFStream.hpp
-  ../include/MatlabIO.hpp
-  ../include/MatlabIOContainer.hpp
-  ../include/typetraits.hpp
-)
-
-message("CVMATIO_PUBLIC_HEADERS ${CVMATIO_PUBLIC_HEADERS}")
-
-set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${CVMATIO_PUBLIC_HEADERS}")
-
 # install
-install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin
-                                LIBRARY DESTINATION lib
-				ARCHIVE DESTINATION lib
-				PUBLIC_HEADER DESTINATION include/cvmatio
+set(generated_dir "${CMAKE_CURRENT_BINARY_DIR}/generated")
+
+set(config_install_dir "lib/cmake/${PROJECT_NAME}")
+set(include_install_dir "include")
+
+set(version_config "${generated_dir}/${PROJECT_NAME}ConfigVersion.cmake")
+set(project_config "${generated_dir}/${PROJECT_NAME}Config.cmake")
+set(targets_export_name "${PROJECT_NAME}Targets")
+set(namespace "${PROJECT_NAME}::")
+
+include(CMakePackageConfigHelpers)
+
+write_basic_package_version_file(
+    "${version_config}" COMPATIBILITY SameMajorVersion
 )
 
-install(DIRECTORY ../include DESTINATION include/cvmatio) # no trailing ../include/
+# Note: variable 'targets_export_name' used
+configure_file("cmake/Config.cmake.in" "${project_config}" @ONLY)
+
+install(
+    TARGETS ${PROJECT_NAME}
+    EXPORT "${targets_export_name}"
+    LIBRARY DESTINATION "lib"
+    ARCHIVE DESTINATION "lib"
+    RUNTIME DESTINATION "bin"
+    INCLUDES DESTINATION "${include_install_dir}/cvmatio"
+)
+
+install(
+    FILES
+    ../include/EFStream.hpp
+    ../include/MatlabIO.hpp
+    ../include/MatlabIOContainer.hpp
+    ../include/typetraits.hpp
+    DESTINATION "${include_install_dir}/cvmatio"
+)
+
+install(
+    FILES "${project_config}" "${version_config}"
+    DESTINATION "${config_install_dir}"
+)
+
+install(
+    EXPORT "${targets_export_name}"
+    NAMESPACE "${namespace}"
+    DESTINATION "${config_install_dir}"
+)
