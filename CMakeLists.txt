@@ -7,7 +7,7 @@ HunterGate(
     SHA1 "ced369107f0f2c7a68e9e93f43fc5492747dd721"
 )
 
-project(cvmatio)
+project(cvmatio VERSION 1.0.18)
 
 # -----------------------------------------------
 # USER-DEFINED VARIABLES
