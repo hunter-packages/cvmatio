@@ -41,6 +41,7 @@
 #include <string>
 #include <vector>
 #include <typeinfo>
+#include <cstdint> // int8_t
 #include <opencv2/core/core.hpp>
 class MatlabIOContainer;
 
