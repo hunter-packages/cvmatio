@@ -1,16 +1,11 @@
 # MatlabIO CMakeLists.txt
-cmake_minimum_required(VERSION 2.8)
-
-message("before hunter gate")
+cmake_minimum_required(VERSION 3.0)
 
 include("cmake/HunterGate.cmake")
 HunterGate(
     URL "https://github.com/ruslo/hunter/archive/v0.8.12.tar.gz"
     SHA1 "ced369107f0f2c7a68e9e93f43fc5492747dd721"
-    FILEPATH "${CMAKE_BINARY_DIR}/hunter-config.cmake"
 )
-
-message("after hunter gate")
 
 project(cvmatio)
 
@@ -40,32 +35,20 @@ endif()
 # COMMON
 
 # include all warning types
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unused-parameter -Werror -pedantic -Wshorten-64-to-32")
-
-if (NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Release CACHE STRING
-        "Choose the type of build. Options are: None, Debug, Release, RelWithDebInfo, MinSizeRel"
-    FORCE)
+if(NOT MSVC)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unused-parameter -Werror -pedantic -Wshorten-64-to-32")
 endif()
 
-find_package(ZLIB CONFIG REQUIRED)
-find_package(TIFF CONFIG REQUIRED)
+set(CMAKE_BUILD_TYPE Release CACHE STRING
+        "Choose the type of build. Options are: None, Debug, Release, RelWithDebInfo, MinSizeRel")
 
-# find the dependencies
+hunter_add_package(OpenCV)
+hunter_add_package(Boost)
+
 find_package(Boost REQUIRED)
+find_package(ZLIB CONFIG) # workaround
+find_package(TIFF CONFIG) # workaround
 find_package(OpenCV REQUIRED)
-
-#include(FindZLIB)
-
-set(ZLIB_ROOT )
-find_package( ZLIB REQUIRED )
-if( ZLIB_FOUND )
-    message(" Found zlib ")
-    message( ${ZLIB_INCLUDE_DIR} )
-endif( ZLIB_FOUND )
-
-#find_library (lzlib NAMES lzlib z)
-#find_package(zlib)
 
 # include the dependencies
 message( "CVMATIO OPENCV: ${OpenCV_INCLUDE_DIRS}" )
