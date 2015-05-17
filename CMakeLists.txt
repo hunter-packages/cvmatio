@@ -45,9 +45,7 @@ set(CMAKE_BUILD_TYPE Release CACHE STRING
 hunter_add_package(OpenCV)
 hunter_add_package(Boost)
 
-find_package(Boost REQUIRED)
-find_package(ZLIB CONFIG QUIET) # workaround
-find_package(TIFF CONFIG QUIET) # workaround
+find_package(Boost CONFIG REQUIRED)
 find_package(OpenCV REQUIRED)
 
 # include the dependencies
@@ -55,7 +53,6 @@ message( "CVMATIO OPENCV: ${OpenCV_INCLUDE_DIRS}" )
 message( "CVMATIO Boost: ${Boost_INCLUDE_DIRS}" )
 message( "CVMATIO ZLIB: ${ZLIB_INCLUDE_DIRS}" )
 
-include_directories(${OpenCV_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIR})
 include_directories("include")
 
 # build the project
@@ -74,6 +71,5 @@ message("")
 message("Building with ECTO/Catkin:     ${BUILD_CATKIN}")
 message("Build as executable:           ${BUILD_EXECUTABLE}")
 message("Build with documentation:      ${BUILD_DOC}")
-message("Build type:                    ${CMAKE_BUILD_TYPE}")
 message("")
 message("---------------------------------------------")

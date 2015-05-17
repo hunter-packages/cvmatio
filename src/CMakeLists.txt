@@ -9,10 +9,7 @@ else()
 endif()
 
 #link
-target_link_libraries(${PROJECT_NAME}   ${Boost_LIBRARIES} 
-                                        ${OpenCV_LIBS} 
-                                        ${ZLIB_LIBRARIES}
-)
+target_link_libraries(${PROJECT_NAME} Boost::boost ${OpenCV_LIBS})
 
 # install
 set(generated_dir "${CMAKE_CURRENT_BINARY_DIR}/generated")
