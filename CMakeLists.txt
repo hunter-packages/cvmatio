@@ -47,6 +47,10 @@ endif()
 set(CMAKE_BUILD_TYPE Release CACHE STRING
         "Choose the type of build. Options are: None, Debug, Release, RelWithDebInfo, MinSizeRel")
 
+if(ANDROID) ### Temporary hack for OpenCV Android builds
+  list(APPEND CMAKE_MODULE_PATH "${HUNTER_TOOLCHAIN_ID_PATH}/Install/sdk/native/jni")
+endif()
+
 hunter_add_package(OpenCV)
 hunter_add_package(Boost)
 
