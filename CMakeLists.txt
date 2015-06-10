@@ -49,6 +49,8 @@ set(CMAKE_BUILD_TYPE Release CACHE STRING
 
 if(ANDROID) ### Temporary hack for OpenCV Android builds
   list(APPEND CMAKE_MODULE_PATH "${HUNTER_TOOLCHAIN_ID_PATH}/Install/sdk/native/jni")
+  set(OPENCV_DIR "${HUNTER_TOOLCHAIN_ID_PATH}/Install/sdk/native/jni") 
+  set(OPENCV_ROOT "${HUNTER_TOOLCHAIN_ID_PATH}/Install/sdk/native/jni") 
 endif()
 
 hunter_add_package(OpenCV)
