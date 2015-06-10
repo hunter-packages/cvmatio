@@ -51,6 +51,14 @@ if(ANDROID) ### Temporary hack for OpenCV Android builds
   list(APPEND CMAKE_MODULE_PATH "${HUNTER_TOOLCHAIN_ID_PATH}/Install/sdk/native/jni")
   set(OPENCV_DIR "${HUNTER_TOOLCHAIN_ID_PATH}/Install/sdk/native/jni") 
   set(OPENCV_ROOT "${HUNTER_TOOLCHAIN_ID_PATH}/Install/sdk/native/jni") 
+  set(OpenCV_DIR "${HUNTER_TOOLCHAIN_ID_PATH}/Install/sdk/native/jni") 
+  set(OpenCV_ROOT "${HUNTER_TOOLCHAIN_ID_PATH}/Install/sdk/native/jni") 
+
+  message("OPENCV_DIR ${OPENCV_DIR}")
+  message("OPENCV_ROOT ${OPENCV_ROOT}")
+  message("OpenCV_DIR ${OpenCV_DIR}")
+  message("OpenCV_ROOT ${OpenCV_ROOT}")
+  message("CMAKE_MODULE_PATH ${CMAKE_MODUlE_PATH}")
 endif()
 
 hunter_add_package(OpenCV)
