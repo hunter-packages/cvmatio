@@ -49,23 +49,16 @@ set(CMAKE_BUILD_TYPE Release CACHE STRING
 
 if(ANDROID) ### Temporary hack for OpenCV Android builds
   list(APPEND CMAKE_MODULE_PATH "${HUNTER_TOOLCHAIN_ID_PATH}/Install/sdk/native/jni")
-  set(OPENCV_DIR "${HUNTER_TOOLCHAIN_ID_PATH}/Install/sdk/native/jni") 
-  set(OPENCV_ROOT "${HUNTER_TOOLCHAIN_ID_PATH}/Install/sdk/native/jni") 
   set(OpenCV_DIR "${HUNTER_TOOLCHAIN_ID_PATH}/Install/sdk/native/jni") 
-  set(OpenCV_ROOT "${HUNTER_TOOLCHAIN_ID_PATH}/Install/sdk/native/jni") 
-
-  message("OPENCV_DIR ${OPENCV_DIR}")
-  message("OPENCV_ROOT ${OPENCV_ROOT}")
   message("OpenCV_DIR ${OpenCV_DIR}")
-  message("OpenCV_ROOT ${OpenCV_ROOT}")
-  message("CMAKE_MODULE_PATH ${CMAKE_MODUlE_PATH}")
+  message("CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}")
 endif()
 
 hunter_add_package(OpenCV)
 hunter_add_package(Boost)
 
 find_package(Boost CONFIG REQUIRED)
-find_package(OpenCV REQUIRED)
+find_package(OpenCV REQUIRED HINTS ${OpenCV_DIR})
 
 # include the dependencies
 message( "CVMATIO OPENCV: ${OpenCV_INCLUDE_DIRS}" )
@@ -73,6 +66,7 @@ message( "CVMATIO Boost: ${Boost_INCLUDE_DIRS}" )
 message( "CVMATIO ZLIB: ${ZLIB_INCLUDE_DIRS}" )
 
 include_directories("include")
+include_directories("${OpenCV_INCLUDE_DIRS}")
 
 # build the project
 add_subdirectory(src)
