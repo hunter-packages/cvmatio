@@ -42,7 +42,6 @@
 #include <assert.h>
 
 #include "MatlabIOContainer.hpp"
-#include "EFStream.hpp"
 #include "typetraits.hpp"
 
 #include <opencv2/core/core.hpp>
@@ -82,11 +81,15 @@ private:
     bool byte_swap_;
     int bytes_read_;
     std::string filename_;
-    EFStream fid_;
+
+    std::fstream fid_;
+    std::ostream *os_ = nullptr;
+    std::istream *is_ = nullptr;
+    
     // internal methods
     void getHeader(void);
     void setHeader(void);
-    bool hasVariable(void) { return fid_.peek() != EOF; }
+    bool hasVariable(void) { return is_->peek() != EOF; }
 	template<class T> MatlabIOContainer constructMatrix(std::vector<char>& name, std::vector<uint32_t>& dims, std::vector<char>& real, std::vector<char>& imag, uint32_t stor_type);
 	MatlabIOContainer constructString(std::vector<char>& name, std::vector<uint32_t>& dims, std::vector<char>& real);
 	MatlabIOContainer constructSparse(std::vector<char>& name, std::vector<uint32_t>& dims, std::vector<char>& real, std::vector<char>& imag);
@@ -98,6 +101,28 @@ private:
     MatlabIOContainer readVariable(uint32_t data_type, uint32_t nbytes, const std::vector<char> &data);
     MatlabIOContainer readBlock(void);
     MatlabIOContainer uncompressFromBin(std::vector<char> data, uint32_t nbytes);
+    
+    // Below routines migrated from EFSstream to support arbitrary istream input
+    
+    // get and set byte swap methods
+    bool byteSwap(void) { return byte_swap_; }
+    void setByteSwap(bool state) { byte_swap_ = state; }
+    
+    // method to swap the Endianness of a stream
+    void swapEndian(char *s, std::streamsize N) {
+        for (int n = 0; n < N; n+=2) std::swap(s[n], s[n+1]);
+    }
+    
+    // overloaded fstream read method with
+    // byte swapping capacity
+    std::istream& read(char *s, std::streamsize n) {
+        // call the parent read
+        std::istream& stream = is_->read(s,n);
+        // swap the endianness if necessary
+        if (byte_swap_ && n%2 == 0) swapEndian(s,n);
+        return stream;
+    }
+    
 public:
     // constructors
     MatlabIO() {}
@@ -106,6 +131,9 @@ public:
     // get and set methods
     std::string filename(void) { return std::string(filename_); }
     // read and write routines
+    
+    bool attach(std::ostream &os); // output
+    bool attach(std::istream &is); // input
     bool open(std::string filename, std::string mode);
     bool close(void);
     std::vector<MatlabIOContainer> read(void);
