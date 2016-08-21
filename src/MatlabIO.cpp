@@ -43,7 +43,9 @@
 #include <cstring>
 #include <iostream>
 #include <exception>
+#include <iomanip>
 #include <zlib.h>
+
 using namespace std;
 using namespace cv;
 
@@ -164,11 +166,13 @@ vector<T2> convertPrimitiveType(const vector<char>& in) {
  * needs reversal, this is automatically handled by esfstream.
  */
 void MatlabIO::getHeader(void) {
+    
     // get the header information from the Mat file
     for (unsigned int n = 0; n < HEADER_LENGTH+1; ++n) header_[n] = '\0';
     for (unsigned int n = 0; n < SUBSYS_LENGTH+1; ++n) subsys_[n] = '\0';
     for (unsigned int n = 0; n < ENDIAN_LENGTH+1; ++n) endian_[n] = '\0';
     
+    byte_swap_ = false;
     read(header_, sizeof(char)*HEADER_LENGTH);
     read(subsys_, sizeof(char)*SUBSYS_LENGTH);
     read((char *)&version_, sizeof(int16_t));
@@ -737,13 +741,13 @@ void MatlabIO::whos(vector<MatlabIOContainer> variables) const {
 	    if(variables[n].name().length() > flmax) 
 	        flmax = variables[n].name().length();
 
-	printf("-------------------------\n");
-	printf("File: %s\n", filename_.c_str());
-	printf("%s\n", header_);
-	printf("Variables:\n");
+    std::cout << "-------------------------\n";
+    std::cout << "File: " << filename_ << "\n";
+    std::cout << header_;
+    std::cout << "Variables: ";
 	for (unsigned int n = 0; n < variables.size(); ++n) {
-		printf("%*s:  %s\n", int(flmax), variables[n].name().c_str(), variables[n].type().c_str());
+        std::cout << std::setw(flmax) << variables[n].name() << " " << variables[n].type() << "\n";
 	}
-	printf("-------------------------\n");
-	fflush(stdout);
+    std::cout <<  "-------------------------\n";
+    std::cout.flush();
 }
