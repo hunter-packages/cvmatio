@@ -57,9 +57,28 @@ bool MatlabIO::open(string filename, string mode) {
 
     // open the file
 	filename_ = filename;
-    if (mode.compare("r") == 0) fid_.open(filename.c_str(), fstream::in  | fstream::binary);
-    if (mode.compare("w") == 0) fid_.open(filename.c_str(), fstream::out | fstream::binary);
+    if (mode.compare("r") == 0) {
+        fid_.open(filename.c_str(), fstream::in  | fstream::binary);
+        is_ = &fid_;
+    }
+    if (mode.compare("w") == 0) {
+        fid_.open(filename.c_str(), fstream::out | fstream::binary);
+        os_ = &fid_;
+    }
+        
     return !fid_.fail();
+}
+
+bool MatlabIO::attach(std::ostream &os)
+{
+    os_ = &os;
+    return !os.fail();
+}
+
+bool MatlabIO::attach(std::istream &is)
+{
+    is_ = &is;
+    return !is.fail();
 }
 
 /*! @brief close the filestream and release all resources
@@ -149,10 +168,11 @@ void MatlabIO::getHeader(void) {
     for (unsigned int n = 0; n < HEADER_LENGTH+1; ++n) header_[n] = '\0';
     for (unsigned int n = 0; n < SUBSYS_LENGTH+1; ++n) subsys_[n] = '\0';
     for (unsigned int n = 0; n < ENDIAN_LENGTH+1; ++n) endian_[n] = '\0';
-    fid_.read(header_, sizeof(char)*HEADER_LENGTH);
-    fid_.read(subsys_, sizeof(char)*SUBSYS_LENGTH);
-    fid_.read((char *)&version_, sizeof(int16_t));
-    fid_.read(endian_, sizeof(char)*ENDIAN_LENGTH);
+    
+    read(header_, sizeof(char)*HEADER_LENGTH);
+    read(subsys_, sizeof(char)*SUBSYS_LENGTH);
+    read((char *)&version_, sizeof(int16_t));
+    read(endian_, sizeof(char)*ENDIAN_LENGTH);
 
     // get the actual version
     if (version_ == 0x0100) version_ = VERSION_5;
@@ -161,8 +181,6 @@ void MatlabIO::getHeader(void) {
     // get the endianess
     if (strcmp(endian_, "IM") == 0) byte_swap_ = false;
     if (strcmp(endian_, "MI") == 0) byte_swap_ = true;
-    // turn on byte swapping if necessary
-    fid_.setByteSwap(byte_swap_);
 
     //printf("Header: %s\nSubsys: %s\nVersion: %d\nEndian: %s\nByte Swap: %d\n", header_, subsys_, version_, endian_, byte_swap_);
     bytes_read_ = 128;
@@ -572,17 +590,12 @@ vector<char> MatlabIO::uncompressVariable(uint32_t& data_type, uint32_t& dbytes,
     readVariableTag(data_type, dbytes, wbytes, buf);
 
     // inflate the remainder of the variable, now that we know its size
-    char *udata_tmp = new char[dbytes];
+    std::vector<char> udata(dbytes);
     infstream.avail_out = dbytes;
-    infstream.next_out = (unsigned char *)udata_tmp;
+    infstream.next_out = (unsigned char *)&udata[0];
     inflate(&infstream, Z_FINISH);
     inflateEnd(&infstream);
-
-    // convert to a vector
-    vector<char> udata(udata_tmp, udata_tmp+dbytes);
-    delete [] udata_tmp;
     return udata;
-
 }
 
 /*! @brief Interpret a variable from a binary block of data
@@ -658,23 +671,21 @@ MatlabIOContainer MatlabIO::readBlock(void) {
     uint32_t dbytes;
     uint32_t wbytes;
     char buf[8];
-    fid_.read(buf, sizeof(char)*8);
+    read(buf, sizeof(char)*8);
     readVariableTag(data_type, dbytes, wbytes, buf);
 
     // read the binary data block
     //printf("\nReading binary data block...\n"); fflush(stdout);
-    char *data_tmp = new char[dbytes];
-    fid_.read(data_tmp, sizeof(char)*dbytes);
-    vector<char> data(data_tmp, data_tmp+dbytes);
-    delete [] data_tmp;
+    vector<char> data(dbytes);
+    read(&data[0], sizeof(char)*data.size());
 
     // move the seek head position to the next 64-bit boundary
     // (but only if the data is uncompressed. Saving yet another 8 tiny bytes...)
     if (data_type != MAT_COMPRESSED) {
         //printf("Aligning seek head to next 64-bit boundary...\n");
-        streampos head_pos = fid_.tellg();
+        streampos head_pos = is_->tellg();
         int padding = head_pos % 8;
-        fid_.seekg(padding, fstream::cur);
+        is_->seekg(padding, fstream::cur);
     }
 
     // now read the variable contained in the block

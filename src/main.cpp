@@ -55,6 +55,8 @@
 using namespace cv;
 using namespace std;
 
+#define CVMATIO_TEST_ISTREAM 1
+
 int main(int argc, char **argv) {
 
     // get the Matlab .Mat file from the command line
@@ -63,8 +65,15 @@ int main(int argc, char **argv) {
 
     // create a new reader
     MatlabIO matio;
+
+#if CVMATIO_TEST_ISTREAM
+    std::ifstream is(filename, std::fstream::in | std::fstream::binary);
+    if(is.fail()) return -1;
+    matio.attach(is);
+#else
     bool ok = matio.open(filename, "r");
     if (!ok) return -1;
+#endif
 
     // read all of the variables in the file
     vector<MatlabIOContainer> variables;
@@ -75,11 +84,15 @@ int main(int argc, char **argv) {
 
     // display the file info
     matio.whos(variables);
-    waitKey();
+
+    cv::Mat d = variables[0].data< cv::Mat >();
+    if(d.cols < 32 && d.rows < 32)
+    {
+        std::cout << d << std::endl;
+    }
 
     // search for a variable named "im" and "gray"
-    Mat gray;
-    Mat im;
+    Mat gray, im;
     for (unsigned int n = 0; n < variables.size(); ++n) {
     	if (variables[n].name().compare("im") == 0) {
     		im = variables[n].data<Mat>();
@@ -90,7 +103,10 @@ int main(int argc, char **argv) {
     	}
     }
 
-    imshow("image", im);
-    waitKey(0);
+    if(!im.empty())
+    {
+        imshow("image", im);
+        waitKey(0);
+    }
     return 0;
 }
