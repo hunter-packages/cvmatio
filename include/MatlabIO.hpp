@@ -78,8 +78,8 @@ private:
     char subsys_[SUBSYS_LENGTH+1];
     char endian_[ENDIAN_LENGTH+1];
     int16_t version_;
-    bool byte_swap_;
-    int bytes_read_;
+    bool byte_swap_ = false;
+    int bytes_read_ = 0;
     std::string filename_;
 
     std::fstream fid_;
