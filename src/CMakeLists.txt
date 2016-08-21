@@ -1,6 +1,6 @@
 # build the project
-set(BUILD_EXECUTABLE False)
-if(BUILD_EXECUTABLE)
+option(CVMATIO_BUILD_EXECUTABLE OFF)
+if(CVMATIO_BUILD_EXECUTABLE)
     set(SRC_FILES MatlabIO.cpp main.cpp)
     add_executable(${PROJECT_NAME} ${SRC_FILES})
 else()
@@ -42,7 +42,6 @@ install(
 
 install(
     FILES
-    ../include/EFStream.hpp
     ../include/MatlabIO.hpp
     ../include/MatlabIOContainer.hpp
     ../include/typetraits.hpp
