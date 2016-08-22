@@ -746,7 +746,7 @@ void MatlabIO::whos(vector<MatlabIOContainer> variables) const {
     std::cout << header_;
     std::cout << "Variables: ";
 	for (unsigned int n = 0; n < variables.size(); ++n) {
-        std::cout << std::setw(flmax) << variables[n].name() << " " << variables[n].type() << "\n";
+        std::cout << std::setw(static_cast<int>(flmax)) << variables[n].name() << " " << variables[n].type() << "\n";
 	}
     std::cout <<  "-------------------------\n";
     std::cout.flush();
