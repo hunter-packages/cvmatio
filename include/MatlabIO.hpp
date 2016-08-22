@@ -78,13 +78,13 @@ private:
     char subsys_[SUBSYS_LENGTH+1];
     char endian_[ENDIAN_LENGTH+1];
     int16_t version_;
-    bool byte_swap_ = false;
-    int bytes_read_ = 0;
+    bool byte_swap_;
+    int bytes_read_;
     std::string filename_;
 
     std::fstream fid_;
-    std::ostream *os_ = nullptr;
-    std::istream *is_ = nullptr;
+    std::ostream *os_;
+    std::istream *is_;
     
     // internal methods
     void getHeader(void);
@@ -125,7 +125,12 @@ private:
     
 public:
     // constructors
-    MatlabIO() {}
+    MatlabIO()
+        : byte_swap_(false)
+        , bytes_read_(0)
+        , os_(nullptr)
+        , is_(nullptr) {}          
+    
     // destructor
     ~MatlabIO() { close(); }
     // get and set methods
