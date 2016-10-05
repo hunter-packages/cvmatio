@@ -146,9 +146,12 @@ void transposeMat(const Mat& src, Mat& dst) {
 template<class T1, class T2>
 vector<T2> convertPrimitiveType(const vector<char>& in) {
 
+    if(in.size() == 0) {
+        return std::vector<T2>();
+    }
 	// firstly reinterpret the input as type T1
 	const size_t T1_size = in.size() / sizeof(T1);
-	const T1* in_ptr = reinterpret_cast<const T1*>(&(in[0]));
+	const T1* in_ptr = reinterpret_cast<const T1*>(in.data());
 
 	// construct the new vector
 	vector<T2> out(in_ptr, in_ptr+T1_size);
@@ -241,7 +244,7 @@ const char * MatlabIO::readVariableTag(uint32_t &data_type, uint32_t &dbytes, ui
 MatlabIOContainer MatlabIO::constructStruct(vector<char>& name, vector<uint32_t>& dims, vector<char>& real) {
 
 	vector<vector<MatlabIOContainer> > array;
-	const char* real_ptr = &(real[0]);
+	const char* real_ptr = real.data();
 	// get the length of each field
 	uint32_t length_type;
 	uint32_t length_dbytes;
@@ -282,7 +285,7 @@ MatlabIOContainer MatlabIO::constructStruct(vector<char>& name, vector<uint32_t>
 		}
 		array.push_back(strct);
 	}
-	return MatlabIOContainer(string(&(name[0])), array);
+	return MatlabIOContainer(string(name.data()), array);
 }
 
 /*! @brief construct a cell array
@@ -302,7 +305,7 @@ MatlabIOContainer MatlabIO::constructStruct(vector<char>& name, vector<uint32_t>
 MatlabIOContainer MatlabIO::constructCell(vector<char>& name, vector<uint32_t>& dims, vector<char>& real) {
 
 	vector<MatlabIOContainer> cell;
-	char* field_ptr = &(real[0]);
+	char* field_ptr = real.data();
 	for (unsigned int n = 0; n < product<uint32_t>(dims); ++n) {
 		MatlabIOContainer field;
 		uint32_t data_type;
@@ -315,7 +318,7 @@ MatlabIOContainer MatlabIO::constructCell(vector<char>& name, vector<uint32_t>& 
 		cell.push_back(field);
 		field_ptr += wbytes;
 	}
-	return MatlabIOContainer(string(&(name[0])), cell);
+	return MatlabIOContainer(string(name.data()), cell);
 }
 
 /*! @brief construct a sparse matrix
@@ -346,7 +349,7 @@ MatlabIOContainer MatlabIO::constructSparse(vector<char>&, vector<uint32_t>&, ve
 MatlabIOContainer MatlabIO::constructString(vector<char>& name, vector<uint32_t>&, vector<char>& real) {
 	// make sure the data is null terminated
 	real.push_back('\0');
-	return MatlabIOContainer(string(&(name[0])), string(&(real[0])));
+	return MatlabIOContainer(string(name.data()), string(real.data()));
 }
 
 
@@ -431,7 +434,7 @@ MatlabIOContainer MatlabIO::constructMatrix(vector<char>& name, vector<uint32_t>
 	assert(vec_real.size() == numel);
 
 	// if the data is a scalar, don't write it to a matrix
-	//if (vec_real.size() == 1 && vec_imag.size() == 0) return MatlabIOContainer(string(&(name[0])), vec_real[0]);
+	//if (vec_real.size() == 1 && vec_imag.size() == 0) return MatlabIOContainer(string(name.data()), vec_real[0]);
 
 	// get the number of channels
 	const unsigned int channels = dims.size() == 3 ? dims[2] : 1;
@@ -455,7 +458,7 @@ MatlabIOContainer MatlabIO::constructMatrix(vector<char>& name, vector<uint32_t>
 	// transpose the matrix since matlab stores them in column major ordering
 	transposeMat(mat, mat);
 
-	return MatlabIOContainer(string(&(name[0])), mat);
+	return MatlabIOContainer(string(name.data()), mat);
 }
 
 /*! @brief interpret all fields of a matrix
@@ -504,7 +507,7 @@ MatlabIOContainer MatlabIO::collateMatrixFields(uint32_t, uint32_t, vector<char>
     const char* name_data = readVariableTag(name_type, name_dbytes, name_wbytes, &(data[pre_wbytes+dim_wbytes]));
     vector<char> name(name_data, name_data+name_dbytes);
     name.push_back('\0');
-    //printf("The variable name is: %s\n", &(name[0]));
+    //printf("The variable name is: %s\n", name.data());
 
     // if the encoded data type is a cell array, bail out now
     if (enc_data_type == MAT_CELL_CLASS) {
@@ -584,7 +587,7 @@ vector<char> MatlabIO::uncompressVariable(uint32_t& data_type, uint32_t& dbytes,
 
     // inflate the variable header
     infstream.avail_in = (int)data.size();
-    infstream.next_in = (unsigned char *)&(data[0]);
+    infstream.next_in = (unsigned char *)data.data();
     infstream.avail_out = 8;
     infstream.next_out = (unsigned char *)&buf;
     ok = inflate(&infstream, Z_NO_FLUSH);
@@ -596,7 +599,7 @@ vector<char> MatlabIO::uncompressVariable(uint32_t& data_type, uint32_t& dbytes,
     // inflate the remainder of the variable, now that we know its size
     std::vector<char> udata(dbytes);
     infstream.avail_out = dbytes;
-    infstream.next_out = (unsigned char *)&udata[0];
+    infstream.next_out = (unsigned char *)udata.data();
     inflate(&infstream, Z_FINISH);
     inflateEnd(&infstream);
     return udata;
@@ -681,7 +684,7 @@ MatlabIOContainer MatlabIO::readBlock(void) {
     // read the binary data block
     //printf("\nReading binary data block...\n"); fflush(stdout);
     vector<char> data(dbytes);
-    read(&data[0], sizeof(char)*data.size());
+    read(data.data(), sizeof(char)*data.size());
 
     // move the seek head position to the next 64-bit boundary
     // (but only if the data is uncompressed. Saving yet another 8 tiny bytes...)
