@@ -51,7 +51,7 @@ using namespace cv;
 
 // This is a place holder until a cmake try_compile() can be added based
 // on the OpenCV dependency
-#if (CV_VERSION_MAJOR > 3) && (CV_VERSION_MINOR > 3) && (CV_VERSION_REVISION >= 0)
+#if ((CV_VERSION_MAJOR >= 3) && (CV_VERSION_MINOR >= 3)) || (CV_VERSION_MAJOR >= 4)
 #  define CVMATIO_HAS_OPENCV_INT64 0
 #else
 #  define CVMATIO_HAS_OPENCV_INT64 1
@@ -412,22 +412,13 @@ MatlabIOContainer MatlabIO::constructMatrix(vector<char>& name, vector<uint32_t>
 			vec_real = convertPrimitiveType<uint32_t, T>(real);
 			vec_imag = convertPrimitiveType<uint32_t, T>(imag);
 			break;
-
 		case MAT_INT64:
-#if CVMATIO_HAS_OPENCV_INT64
 			vec_real = convertPrimitiveType<int64_t, T>(real);
 			vec_imag = convertPrimitiveType<int64_t, T>(imag);
-#else
-            CV_Assert(false);
-#endif
 			break;
 		case MAT_UINT64:
-#if CVMATIO_HAS_OPENCV_INT64
 			vec_real = convertPrimitiveType<uint64_t, T>(real);
 			vec_imag = convertPrimitiveType<uint64_t, T>(imag);
-#else
-            CV_Assert(false);
-#endif
 			break;
 		case MAT_FLOAT:
 			vec_real = convertPrimitiveType<float, T>(real);
@@ -571,14 +562,14 @@ MatlabIOContainer MatlabIO::collateMatrixFields(uint32_t, uint32_t, vector<char>
 #if CVMATIO_HAS_OPENCV_INT64
             variable = constructMatrix<int64_t>(name, dims, real, imag, real_type);
 #else
-            CV_Assert(false);
+            CV_Assert(false); // alert user that file can't be parsed
 #endif
             break;
         case MAT_UINT64_CLASS:
 #if CVMATIO_HAS_OPENCV_INT64
             variable = constructMatrix<uint64_t>(name, dims, real, imag, real_type);
 #else
-            CV_Assert(false);
+            CV_Assert(false); // alert user that file can't be parsed
 #endif
             break;
         case MAT_CHAR_CLASS:      variable = constructString(name, dims, real); break;
