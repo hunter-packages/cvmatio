@@ -49,6 +49,14 @@
 using namespace std;
 using namespace cv;
 
+// This is a place holder until a cmake try_compile() can be added based
+// on the OpenCV dependency
+#if ((CV_VERSION_MAJOR >= 3) && (CV_VERSION_MINOR >= 3)) || (CV_VERSION_MAJOR >= 4)
+#  define CVMATIO_HAS_OPENCV_INT64 0
+#else
+#  define CVMATIO_HAS_OPENCV_INT64 1
+#endif
+
 /*! @brief Open a filestream for reading or writing
  *
  * @param filename the full name and filepath of the file
@@ -550,8 +558,20 @@ MatlabIOContainer MatlabIO::collateMatrixFields(uint32_t, uint32_t, vector<char>
         case MAT_UINT32_CLASS:    variable = constructMatrix<int32_t>(name, dims, real, imag, real_type); break;
         case MAT_FLOAT_CLASS:     variable = constructMatrix<float>(name, dims, real, imag, real_type); break;
         case MAT_DOUBLE_CLASS:    variable = constructMatrix<double>(name, dims, real, imag, real_type); break;
-        case MAT_INT64_CLASS:     variable = constructMatrix<int64_t>(name, dims, real, imag, real_type); break;
-        case MAT_UINT64_CLASS:    variable = constructMatrix<uint64_t>(name, dims, real, imag, real_type); break;
+        case MAT_INT64_CLASS:
+#if CVMATIO_HAS_OPENCV_INT64
+            variable = constructMatrix<int64_t>(name, dims, real, imag, real_type);
+#else
+            CV_Assert(false); // alert user that file can't be parsed
+#endif
+            break;
+        case MAT_UINT64_CLASS:
+#if CVMATIO_HAS_OPENCV_INT64
+            variable = constructMatrix<uint64_t>(name, dims, real, imag, real_type);
+#else
+            CV_Assert(false); // alert user that file can't be parsed
+#endif
+            break;
         case MAT_CHAR_CLASS:      variable = constructString(name, dims, real); break;
         // sparse types
         case MAT_SPARSE_CLASS:    variable = constructSparse(name, dims, real, imag); break;
